@@ -20,22 +20,22 @@ namespace WebApplication6.Controllers
             _service = service;
         }
         [HttpPost]
-        public async Task AddCountry(CountryArgModel model)
+        public async Task Add(CountryArgModel model)
         {
             await _service.AddCountry(model);
         }
         [HttpPost]
-        public async Task DeleteCountry(int id)
+        public async Task Delete(int id)
         {
             await _service.DeleteCountry(id);
         }
         [HttpPost]
-        public async Task UpdateCountry(CountryArgModel model)
+        public async Task Update(CountryArgModel model)
         {
             await _service.UpdateCountry(model);
         }
         [HttpGet]
-        public async Task GetCountry(int id)
+        public async Task Get(int id)
         {
             await _service.GetCountry(id);
         }
