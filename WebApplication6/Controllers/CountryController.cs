@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using WebApplication6.Models;
 using WebApplication6.ViewModels;
 
 namespace WebApplication6.Controllers
@@ -20,24 +15,28 @@ namespace WebApplication6.Controllers
             _service = service;
         }
         [HttpPost]
-        public async Task Add(CountryArgModel model)
+        [Route(nameof(AddCountry))]
+        public async Task AddCountry(CountryArgModel model)
         {
-            await _service.AddCountry(model);
-        }
-        [HttpPost]
-        public async Task Delete(int id)
-        {
-            await _service.DeleteCountry(id);
-        }
-        [HttpPost]
-        public async Task Update(CountryArgModel model)
-        {
-            await _service.UpdateCountry(model);
+            await _service.Add(model);
         }
         [HttpGet]
-        public async Task Get(int id)
+        [Route(nameof(DeleteCountry))]
+        public async Task<bool> DeleteCountry(int id)
         {
-            await _service.GetCountry(id);
+            return await _service.Delete(id);
+        }
+        [HttpPost]
+        [Route(nameof(UpdateCountry))]
+        public async Task UpdateCountry(CountryArgModel model)
+        {
+            await _service.Update(model);
+        }
+        [HttpGet]
+        [Route(nameof(GetCountry))]
+        public async Task<CountryArgModel> GetCountry(int id)
+        {
+            return await _service.Get(id);
         }
     }
 }
