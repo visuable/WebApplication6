@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using WebApplication6.Models;
+using WebApplication6.ViewModels;
 
 namespace WebApplication6.Controllers
 {
@@ -13,31 +14,30 @@ namespace WebApplication6.Controllers
     [Produces("application/json")]
     public class CountryController : ControllerBase
     {
-        private AppContext context;
-        public CountryController(AppContext context)
+        private IDbCountryService _service;
+        public CountryController(IDbCountryService service)
         {
-            this.context = context;
+            _service = service;
         }
-
+        [HttpPost]
+        public async Task AddCountry(CountryArgModel model)
+        {
+            await _service.AddCountry(model);
+        }
+        [HttpPost]
+        public async Task DeleteCountry(int id)
+        {
+            await _service.DeleteCountry(id);
+        }
+        [HttpPost]
+        public async Task UpdateCountry(CountryArgModel model)
+        {
+            await _service.UpdateCountry(model);
+        }
         [HttpGet]
-        public IEnumerable<Country> Countries()
+        public async Task GetCountry(int id)
         {
-            var countries = context.Countries.AsEnumerable();
-            return countries;
-        }
-        [HttpPost]
-        public void Countries([FromBody]Country country)
-        {
-            context.Countries.Add(country);
-            context.SaveChanges();
-            RedirectToAction("Countries");
-        }
-        [HttpPost]
-        public void Update([FromBody] Country country)
-        {
-            context.Countries.Update(country);
-            context.SaveChanges();
-            RedirectToAction("Countries");
+            await _service.GetCountry(id);
         }
     }
 }
