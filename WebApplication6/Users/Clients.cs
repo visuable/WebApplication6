@@ -18,7 +18,8 @@ namespace WebApplication6.Users
                 ClientName = "Example client application using client credentials",
                 AllowedGrantTypes = GrantTypes.ClientCredentials,
                 ClientSecrets = new List<Secret> {new Secret("SuperSecretPassword".Sha256())}, // change me!
-                AllowedScopes = new List<string> {"api1.read"}
+                AllowedScopes = new List<string> {"api1.read"},
+                RedirectUris = {"https://localhost:44388/country"}
             }
         };
         }

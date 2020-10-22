@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
 using WebApplication6.Models;
 using WebApplication6.Services;
 using WebApplication6.Users;
@@ -28,7 +27,7 @@ namespace WebApplication6
         {
             services.AddAuthentication("Bearer").AddIdentityServerAuthentication("Bearer", opt =>
             {
-                opt.ApiName = "CountryApi";
+                opt.ApiName = "api1";
                 opt.Authority = "https://localhost:44388";
             });
             services.AddIdentityServer()
@@ -41,6 +40,7 @@ namespace WebApplication6
             services.AddAutoMapper(typeof(CountryToViewCountryModelProfile), typeof(ViewCountryToCountryModelProfile), typeof(ViewCityToCityModelProfile), typeof(CityToCityViewModelProfile));
             services.AddTransient<IDbCountryService, DbManagerCountryService>();
             services.AddDbContext<AppContext>(x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddSingleton<ISender, EmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +55,6 @@ namespace WebApplication6
 
             app.UseRouting();
             app.UseIdentityServer();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
