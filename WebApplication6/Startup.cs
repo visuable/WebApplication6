@@ -1,12 +1,15 @@
 using AutoMapper;
+using IdentityServer4.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 using WebApplication6.Models;
 using WebApplication6.Services;
+using WebApplication6.Users;
 using WebApplication6.ViewModels;
 
 namespace WebApplication6
@@ -23,10 +26,17 @@ namespace WebApplication6
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-           //var mapper = new MapperConfiguration(x => x.CreateMap<Country, CountryArgModel>().ForMember(x => x.Cities, option => option.Ignore()));
-           // services.AddAutoMapper();
-
-
+            services.AddAuthentication("Bearer").AddIdentityServerAuthentication("Bearer", opt =>
+            {
+                opt.ApiName = "CountryApi";
+                opt.Authority = "https://localhost:44388";
+            });
+            services.AddIdentityServer()
+    .AddInMemoryClients(Clients.Get())
+    .AddInMemoryIdentityResources(Users.Resources.GetIdentityResources())
+    .AddInMemoryApiResources(Users.Resources.GetApiResources())
+    .AddInMemoryApiScopes(Users.Resources.GetApiScopes())
+    .AddDeveloperSigningCredential();
             services.AddControllers();
             services.AddAutoMapper(typeof(CountryToViewCountryModelProfile), typeof(ViewCountryToCountryModelProfile), typeof(ViewCityToCityModelProfile), typeof(CityToCityViewModelProfile));
             services.AddTransient<IDbCountryService, DbManagerCountryService>();
@@ -44,6 +54,7 @@ namespace WebApplication6
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseIdentityServer();
 
             app.UseAuthorization();
 
@@ -57,7 +68,8 @@ namespace WebApplication6
 
     public class CountryToViewCountryModelProfile : Profile
     {
-        public CountryToViewCountryModelProfile() {
+        public CountryToViewCountryModelProfile()
+        {
             CreateMap<Country, CountryArgModel>()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name)).ForMember(d => d.Code, opt => opt.MapFrom(s => s.Code)).ForMember(d => d.Cities, opt => opt.MapFrom(s => s.Cities));
         }
